@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace WebCompiler
 {
@@ -88,21 +89,18 @@ namespace WebCompiler
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
                 FileName = "cmd.exe",
-                Arguments = $"/c \"\"{Path.Combine(_path, "node_modules\\.bin\\node-sass.cmd")}\" {arguments} \"{info.FullName}\" \"",
+                Arguments = $"/c \"\"{Path.Combine(_path, "node_modules\\.bin\\sass.cmd")}\" {arguments} \"{info.FullName}\" \"",
                 StandardOutputEncoding = Encoding.UTF8,
                 StandardErrorEncoding = Encoding.UTF8,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
             };
 
-            // Pipe output from node-sass to postcss if autoprefix option is set
+            // Pipe output from sass to postcss if autoprefix option is set
             SassOptions options = SassOptions.FromConfig(config);
             if (!string.IsNullOrEmpty(options.AutoPrefix))
             {
                 string postCssArguments = "--use autoprefixer";
-
-                if (!options.SourceMap && !config.SourceMap)
-                    postCssArguments += " --no-map";
 
                 start.Arguments = start.Arguments.TrimEnd('"') + $" | \"{Path.Combine(_path, "node_modules\\.bin\\postcss.cmd")}\" {postCssArguments}\"";
                 start.EnvironmentVariables.Add("BROWSERSLIST", options.AutoPrefix);
@@ -112,13 +110,13 @@ namespace WebCompiler
 
             using (Process p = Process.Start(start))
             {
-                var stdout = p.StandardOutput.ReadToEndAsync();
-                var stderr = p.StandardError.ReadToEndAsync();
+                Task<string> stdout = p.StandardOutput.ReadToEndAsync();
+                Task<string> stderr = p.StandardError.ReadToEndAsync();
                 p.WaitForExit();
 
                 _output = stdout.Result;
-                // postcss outputs "√ Finished stdin (##ms)" to stderr for some reason
-                if (!stderr.Result.StartsWith("√"))
+
+                if (!string.IsNullOrEmpty(stderr.Result))
                     _error = stderr.Result;
             }
         }
@@ -130,27 +128,17 @@ namespace WebCompiler
             SassOptions options = SassOptions.FromConfig(config);
 
             if (options.SourceMap || config.SourceMap)
-                arguments += " --source-map-embed=true";
+                arguments += " --embed-source-map";
 
             arguments += " --precision=" + options.Precision;
 
-            if (!string.IsNullOrEmpty(options.OutputStyle))
-                arguments += " --output-style=" + options.OutputStyle;
+            arguments += " --style=" + options.Style.ToString().ToLowerInvariant();
 
-            if (!string.IsNullOrEmpty(options.IndentType))
-                arguments += " --indent-type=" + options.IndentType;
+            if (options.LoadPaths != null)
+                foreach (string loadPath in options.LoadPaths)
+                    arguments += " --load-path=" + loadPath;
 
-            if (options.IndentWidth > -1)
-                arguments += " --indent-width=" + options.IndentWidth;
-
-            if (!string.IsNullOrEmpty(options.IncludePath))
-                arguments += " --include-path=" + options.IncludePath;
-
-            if (!string.IsNullOrEmpty(options.SourceMapRoot))
-                arguments += " --source-map-root=" + options.SourceMapRoot;
-
-            if (!string.IsNullOrEmpty(options.LineFeed))
-                arguments += " --linefeed=" + options.LineFeed;
+            //arguments += " --source-map-urls=" + options.SourceMapUrls.ToString().ToLowerInvariant(); // does not work with stdout
 
             return arguments;
         }
