@@ -21,7 +21,7 @@ namespace WebCompilerVsix
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class WebCompilerPackage : AsyncPackage
     {
-        public const string Version = "1.4.167";
+        public const string Version = "1.13.3";
         public static DTE2 _dte;
         public static Package Package;
         private SolutionEvents _solutionEvents;
