@@ -1,55 +1,55 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\common.props" />
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFrameworks>net48;netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
-    
-    <Title>Web Compiler</Title>
-    <PackageId>BuildWebCompiler</PackageId>
+    <Import Project="..\common.props" />
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFrameworks>net48;netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
 
-    <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
-    <!-- forces SDK to copy dependencies into build output to make packing easier -->
-    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <Authors>Alex Garcia</Authors>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>true</Prefer32Bit>
-    <Optimize>true</Optimize>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Node\prepare.cmd" />
-    <EmbeddedResource Include="Node\node.7z" />
-    <EmbeddedResource Include="Node\node_modules.7z" />
-    <EmbeddedResource Include="Node\7za.exe" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Framework" Version="16.11.0" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.11.0" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NUglify" Version="1.20.0" PrivateAssets="All" />
-    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="MSBuild\*.targets" PackagePath="build\" />
-  </ItemGroup>
-  <Target Name="PrepareNpmDependencies" AfterTargets="Restore">
-    <Exec Command="..\..\build\build.cmd" />
-  </Target>
-  <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
-    <!--
+        <Title>Web Compiler</Title>
+        <PackageId>BuildWebCompiler</PackageId>
+
+        <BuildOutputTargetFolder>tools</BuildOutputTargetFolder>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <!-- forces SDK to copy dependencies into build output to make packing easier -->
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <Authors>Alex Garcia</Authors>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <Prefer32Bit>true</Prefer32Bit>
+        <Optimize>true</Optimize>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Node\prepare.cmd" />
+        <EmbeddedResource Include="Node\node.7z" />
+        <EmbeddedResource Include="Node\node_modules.7z" />
+        <EmbeddedResource Include="Node\7za.exe" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Build.Framework" Version="16.11.0" PrivateAssets="All" />
+        <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.11.0" PrivateAssets="All" />
+        <PackageReference Include="Newtonsoft.Json" Version="12.0.3" PrivateAssets="All"></PackageReference>
+        <PackageReference Include="NUglify" Version="1.20.0" PrivateAssets="All" />
+        <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+    </ItemGroup>
+    <ItemGroup>
+        <Content Include="MSBuild\*.targets" PackagePath="build\" />
+    </ItemGroup>
+    <Target Name="PrepareNpmDependencies" AfterTargets="Restore">
+        <Exec Command="..\..\build\build.cmd" />
+    </Target>
+    <Target Name="PackTaskDependencies" BeforeTargets="GenerateNuspec">
+        <!--
     The include needs to happen after output has been copied to build output folder
     but before NuGet generates a nuspec. See https://github.com/NuGet/Home/issues/4704.
     -->
-    <ItemGroup>
-      <_PackageFiles Include="bin\$(Configuration)\*\Newtonsoft.Json.dll;bin\$(Configuration)\*\NUglify.dll">
-        <PackagePath>tools\%(RecursiveDir)</PackagePath>
-        <Visible>false</Visible>
-        <BuildAction>Content</BuildAction>
-      </_PackageFiles>
-    </ItemGroup>
-  </Target>
+        <ItemGroup>
+            <_PackageFiles Include="bin\$(Configuration)\*\Newtonsoft.Json.dll;bin\$(Configuration)\*\NUglify.dll">
+                <PackagePath>tools\%(RecursiveDir)</PackagePath>
+                <Visible>false</Visible>
+                <BuildAction>Content</BuildAction>
+            </_PackageFiles>
+        </ItemGroup>
+    </Target>
 </Project>

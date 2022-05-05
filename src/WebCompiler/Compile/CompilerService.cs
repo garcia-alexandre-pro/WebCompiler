@@ -10,7 +10,7 @@ namespace WebCompiler
     /// </summary>
     public static class CompilerService
     {
-        internal const string Version = "1.13.3";
+        internal const string Version = "1.14.0";
         private static readonly string _path = Path.Combine(Path.GetTempPath(), "WebCompiler" + Version);
         private static object _syncRoot = new object(); // Used to lock on the initialize step
 
@@ -127,18 +127,12 @@ namespace WebCompiler
 
         private static void OnInitializing()
         {
-            if (Initializing != null)
-            {
-                Initializing(null, EventArgs.Empty);
-            }
+            Initializing?.Invoke(null, EventArgs.Empty);
         }
 
         private static void OnInitialized()
         {
-            if (Initialized != null)
-            {
-                Initialized(null, EventArgs.Empty);
-            }
+            Initialized?.Invoke(null, EventArgs.Empty);
         }
 
         /// <summary>

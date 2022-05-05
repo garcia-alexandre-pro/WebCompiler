@@ -94,11 +94,11 @@
       <Link>Resources\LICENSE</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\WebCompiler\bin\$(Configuration)\net48\WebCompiler.pdb">
+    <Content Include="..\WebCompiler\bin\$(Configuration)\WebCompiler.pdb">
       <Link>WebCompiler.pdb</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="..\..\Packages\Newtonsoft.Json.*\lib\net45\Newtonsoft.Json.dll">
+    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Newtonsoft.Json.dll">
       <Link>Newtonsoft.Json.dll</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -180,6 +180,7 @@
     <ProjectReference Include="..\WebCompiler\WebCompiler.csproj">
       <Project>{b714b5b9-27c4-443c-9517-fe5c5ef46ea2}</Project>
       <Name>WebCompiler</Name>
+      <IncludeOutputGroupsInVSIX>BuiltProjectOutputGroup%3bBuiltProjectOutputGroupDependencies%3bGetCopyToOutputDirectoryItems%3bSatelliteDllsProjectOutputGroup</IncludeOutputGroupsInVSIX>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

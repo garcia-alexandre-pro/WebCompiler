@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace WebCompiler
 {
@@ -11,11 +12,12 @@ namespace WebCompiler
         {
             string configPath = args[0];
             string file = args.Length > 1 ? args[1] : null;
-            var configs = GetConfigs(configPath, file);
+            IEnumerable<Config> configs = GetConfigs(configPath, file);
 
             if (configs == null)
             {
                 Console.WriteLine("\x1B[33mNo configurations matched");
+
                 return 0;
             }
 
@@ -25,11 +27,13 @@ namespace WebCompiler
             var results = processor.Process(configPath, configs);
             var errorResults = results.Where(r => r.HasErrors);
 
-            foreach (var result in errorResults)
-                foreach (var error in result.Errors)
+            foreach (CompilerResult result in errorResults)
+            {
+                foreach (CompilerError error in result.Errors)
                 {
                     Console.Write("\x1B[31m" + error.Message);
                 }
+            }
 
             return errorResults.Any() ? 1 : 0;
         }
@@ -52,7 +56,7 @@ namespace WebCompiler
 
         private static IEnumerable<Config> GetConfigs(string configPath, string file)
         {
-            var configs = ConfigHandler.GetConfigs(configPath);
+            IEnumerable<Config> configs = ConfigHandler.GetConfigs(configPath);
 
             if (configs == null || !configs.Any())
                 return null;

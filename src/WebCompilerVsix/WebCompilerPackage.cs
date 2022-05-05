@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 using EnvDTE;
 using EnvDTE80;
+using Microsoft;
 using Microsoft.VisualStudio.Shell;
 using Microsoft.VisualStudio.Shell.Interop;
 using WebCompiler;
@@ -21,7 +24,7 @@ namespace WebCompilerVsix
     [ProvideAutoLoad(UIContextGuids80.SolutionExists, PackageAutoLoadFlags.BackgroundLoad)]
     public sealed class WebCompilerPackage : AsyncPackage
     {
-        public const string Version = "1.13.3";
+        public const string Version = "1.14.0";
         public static DTE2 _dte;
         public static Package Package;
         private SolutionEvents _solutionEvents;
@@ -31,7 +34,8 @@ namespace WebCompilerVsix
         {
             await ThreadHelper.JoinableTaskFactory.SwitchToMainThreadAsync();
 
-            _dte = GetService(typeof(DTE)) as DTE2;
+            _dte = _dte ?? await GetServiceAsync(typeof(DTE)) as DTE2;
+            Assumes.Present(_dte);
             Package = this;
 
             Logger.Initialize(this, Constants.VSIX_NAME);
@@ -61,14 +65,12 @@ namespace WebCompilerVsix
         {
             var serviceProvider = new ServiceProvider((IServiceProvider)_dte);
 
-            IVsHierarchy vsHierarchy;
-            uint itemId, docCookie;
-            VsShellUtilities.GetRDTDocumentInfo(
-                serviceProvider, documentPath, out vsHierarchy, out itemId, out persistDocData, out docCookie);
+            VsShellUtilities.GetRDTDocumentInfo(serviceProvider, documentPath, out IVsHierarchy vsHierarchy, out uint itemId, out persistDocData, out uint docCookie);
+
             if (persistDocData != null)
             {
-                int isDirty;
-                persistDocData.IsDocDataDirty(out isDirty);
+                persistDocData.IsDocDataDirty(out int isDirty);
+
                 return isDirty == 1;
             }
 
@@ -89,7 +91,8 @@ namespace WebCompilerVsix
             await JoinableTaskFactory.SwitchToMainThreadAsync();
 
             _dispatcher = Dispatcher.CurrentDispatcher;
-            _dte = GetService(typeof(DTE)) as DTE2;
+            _dte = _dte ?? await GetServiceAsync(typeof(DTE)) as DTE2;
+            Assumes.Present(_dte);
 
             WebCompiler.CompilerService.Initializing += (s, e) => { StatusText("Installing updated versions of the web compilers..."); };
             WebCompiler.CompilerService.Initialized += (s, e) => { StatusText("Done installing the web compilers"); };
@@ -98,7 +101,7 @@ namespace WebCompilerVsix
             _dispatcher.BeginInvoke(new Action(() =>
             {
                 // Then execute in a background thread.
-                System.Threading.ThreadPool.QueueUserWorkItem((o) =>
+                ThreadPool.QueueUserWorkItem((o) =>
                 {
                     try
                     {
