@@ -26,8 +26,7 @@ namespace WebCompiler
         /// Gets the dependency tree for the type of file of the given sourceFile
         /// </summary>
         /// <returns>the dependency tree</returns>
-        public static Dictionary<string, Dependencies> GetDependencies(string projectRootPath,
-                                                                       string sourceFile)
+        public static Dictionary<string, Dependencies> GetDependencies(string projectRootPath, string sourceFile)
         {
             if (projectRootPath == null)
                 return null;
@@ -50,6 +49,7 @@ namespace WebCompiler
             if (_dependencies.ContainsKey(dependencyType))
             {
                 _dependencies[dependencyType].UpdateFileDependencies(sourceFile);
+
                 return _dependencies[dependencyType].GetDependencies(projectRootPath);
             }
             else
@@ -62,6 +62,7 @@ namespace WebCompiler
         private static DependencyType GetDependencyType(string sourceFile)
         {
             string ext = System.IO.Path.GetExtension(sourceFile).ToUpperInvariant();
+
             switch (ext)
             {
                 case ".LESS":
