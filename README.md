@@ -137,3 +137,22 @@ Here's an example of what that file looks like:
 ]
 ```
 Default values for `compilerconfig.json` can be found in the `compilerconfig.json.defaults` file in the same location. 
+
+### packagereference compliance
+
+In case you'd like to compile files from a nuget package using packagereference system, you should follow some simple rules:
+
+- First, your compilerconfig.json file and project configuration file (.csproj or .vbproj) should be in the same folder, as the compiler uses data stored in the configuration file to retrieve the files to compile.
+- Then, you should specify the package name in the compilerconfig.json file.
+- Finally, the input file path should contain the full contentfiles configuration for the package (usually, try `any/any/`) followed by the wwwroot path, somthing like `any/any/wwwroot/scss` for instance.
+
+Below, you'll find an example:
+```json
+[
+  {
+    "outputFile": "wwwroot/css/output.css",
+    "inputFile": "any/any/wwwroot/scss/input.scss",
+    "packageName": "Example.Package"
+  }
+]
+```
