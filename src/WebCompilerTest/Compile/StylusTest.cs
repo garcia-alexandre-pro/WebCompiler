@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebCompiler;
@@ -26,7 +27,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("STYLUS")]
         public void CompileStylus()
         {
-            var result = _processor.Process("../../artifacts/stylusconfig.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/stylusconfig.json");
             Assert.IsTrue(File.Exists("../../artifacts/stylus/output.css"), "output doesn't exist");
 
             string sourceMap = ScssTest.DecodeSourceMap(result.First().CompiledContent);
@@ -36,8 +37,8 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("STYLUS")]
         public void CompileStylusWithError()
         {
-            var result = _processor.Process("../../artifacts/stylusconfig.json");
-            var second = result.ElementAt(1);
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/stylusconfig.json");
+            CompilerResult second = result.ElementAt(1);
 
             Assert.IsTrue(second.HasErrors, "Has no errors");
             Assert.IsTrue(second.Errors.First().ColumnNumber == 9, "Wrong column number");

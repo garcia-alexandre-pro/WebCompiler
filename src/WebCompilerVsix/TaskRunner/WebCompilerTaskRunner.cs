@@ -69,7 +69,7 @@ namespace WebCompilerVsix
         private ITaskRunnerNode GetFileType(string configPath, string extension)
         {
             var configs = ConfigHandler.GetConfigs(configPath);
-            var types = configs?.Where(c => Path.GetExtension(c.InputFile).Equals(extension, StringComparison.OrdinalIgnoreCase));
+            var types = configs?.Where(c => Path.GetExtension(c.InputFileRelative).Equals(extension, StringComparison.OrdinalIgnoreCase));
 
             if (types == null || !types.Any())
                 return null;
@@ -84,9 +84,9 @@ namespace WebCompilerVsix
 
             foreach (var config in types)
             {
-                TaskRunnerNode child = new TaskRunnerNode(config.InputFile, true)
+                TaskRunnerNode child = new TaskRunnerNode(config.InputFileRelative, true)
                 {
-                    Command = GetCommand(cwd, $"\"{configPath}\" \"{config.InputFile}\"")
+                    Command = GetCommand(cwd, $"\"{configPath}\" \"{config.InputFileRelative}\"")
                 };
 
                 type.Children.Add(child);

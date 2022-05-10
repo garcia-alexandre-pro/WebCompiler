@@ -89,9 +89,7 @@ namespace WebCompiler
         /// <summary>
         /// Compiles all configs with the same input file extension as the specified sourceFile
         /// </summary>
-        public IEnumerable<CompilerResult> SourceFileChanged(string configFile,
-                                                             string sourceFile,
-                                                             string projectPath)
+        public IEnumerable<CompilerResult> SourceFileChanged(string configFile, string sourceFile, string projectPath)
         {
             return SourceFileChanged(configFile, sourceFile, projectPath, new HashSet<string>());
         }
@@ -99,10 +97,7 @@ namespace WebCompiler
         /// <summary>
         /// Compiles all configs with the same input file extension as the specified sourceFile
         /// </summary>
-        private IEnumerable<CompilerResult> SourceFileChanged(string configFile,
-                                                              string sourceFile,
-                                                              string projectPath,
-                                                              HashSet<string> compiledFiles)
+        private IEnumerable<CompilerResult> SourceFileChanged(string configFile, string sourceFile, string projectPath, HashSet<string> compiledFiles)
         {
             lock (_syncRoot)
             {
@@ -113,7 +108,7 @@ namespace WebCompiler
                 // Compile if the file if it's referenced directly in compilerconfig.json
                 foreach (Config config in configs)
                 {
-                    string input = Path.Combine(folder, config.InputFile.Replace("/", "\\"));
+                    string input = Path.Combine(folder, config.InputFileRelative.Replace("/", "\\"));
 
                     if (input.Equals(sourceFile, StringComparison.OrdinalIgnoreCase))
                     {
@@ -147,7 +142,7 @@ namespace WebCompiler
 
                         foreach (Config config in configs)
                         {
-                            string inputExtension = Path.GetExtension(config.InputFile);
+                            string inputExtension = Path.GetExtension(config.InputFileRelative);
 
                             if (inputExtension.Equals(sourceExtension, StringComparison.OrdinalIgnoreCase))
                                 list.Add(ProcessConfig(folder, config));
@@ -172,7 +167,7 @@ namespace WebCompiler
 
                 foreach (Config config in configs)
                 {
-                    string input = Path.Combine(folder, config.InputFile.Replace("/", "\\"));
+                    string input = Path.Combine(folder, config.InputFileRelative.Replace("/", "\\"));
 
                     if (input.Equals(sourceFile, StringComparison.OrdinalIgnoreCase))
                         list.Add(config);

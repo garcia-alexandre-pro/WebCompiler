@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -8,7 +9,7 @@ namespace WebCompiler
 {
     internal class IcedCoffeeScriptCompiler : ICompiler
     {
-        private static Regex _errorRx = new Regex(":(?<line>[0-9]+):(?<column>[0-9]+).*error: (?<message>.+)", RegexOptions.Compiled);
+        //private static Regex _errorRx = new Regex(":(?<line>[0-9]+):(?<column>[0-9]+).*error: (?<message>.+)", RegexOptions.Compiled);
         private string _path;
         private string _error = string.Empty;
         private string _temp = Path.Combine(Path.GetTempPath(), ".iced-coffee-script");
@@ -20,8 +21,7 @@ namespace WebCompiler
 
         public CompilerResult Compile(Config config)
         {
-            string baseFolder = Path.GetDirectoryName(config.FileName);
-            string inputFile = Path.Combine(baseFolder, config.InputFile);
+            string inputFile = config.InputFileAbsolute;
 
             FileInfo info = new FileInfo(inputFile);
             string content = File.ReadAllText(info.FullName);
@@ -54,20 +54,16 @@ namespace WebCompiler
 
                 if (_error.Length > 0)
                 {
+                    JObject json = JObject.Parse(_error);
+
                     CompilerError ce = new CompilerError
                     {
                         FileName = info.FullName,
-                        Message = _error.Replace(baseFolder, string.Empty),
+                        Message = json["message"].ToString(),
+                        ColumnNumber = int.Parse(json["column"].ToString()),
+                        LineNumber = int.Parse(json["line"].ToString()),
+                        //IsWarning = !string.IsNullOrEmpty(_output)
                     };
-
-                    var match = _errorRx.Match(_error);
-
-                    if (match.Success)
-                    {
-                        ce.Message = match.Groups["message"].Value.Replace(baseFolder, string.Empty);
-                        ce.LineNumber = int.Parse(match.Groups["line"].Value);
-                        ce.ColumnNumber = int.Parse(match.Groups["column"].Value);
-                    }
 
                     result.Errors.Add(ce);
                 }

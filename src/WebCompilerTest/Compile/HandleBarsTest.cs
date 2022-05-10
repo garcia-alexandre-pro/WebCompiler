@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebCompiler;
@@ -33,7 +34,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("HandleBars")]
         public void CompileHandleBars()
         {
-            var result = _processor.Process("../../artifacts/handlebarsconfig.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/handlebarsconfig.json");
             FileInfo js = new FileInfo("../../artifacts/handlebars/test.js");
             FileInfo min = new FileInfo("../../artifacts/handlebars/test.min.js");
             FileInfo map = new FileInfo("../../artifacts/handlebars/test.js.map");
@@ -47,7 +48,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("HandleBars")]
         public void CompileHandleBarsPartial()
         {
-            var result = _processor.Process("../../artifacts/handlebarsconfigPartial.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/handlebarsconfigPartial.json");
             FileInfo js = new FileInfo("../../artifacts/handlebars/_partial.js");
             FileInfo min = new FileInfo("../../artifacts/handlebars/_partial.min.js");
             Assert.IsTrue(js.Exists, "Output file doesn't exist");
@@ -59,8 +60,8 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("HandleBars")]
         public void CompileHandleBarsWithError()
         {
-            var result = _processor.Process("../../artifacts/handlebarsconfigError.json");
-            var error = result.First().Errors[0];
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/handlebarsconfigError.json");
+            CompilerError error = result.First().Errors[0];
             Assert.AreEqual(2, error.LineNumber);
             Assert.AreEqual("Parse error", error.Message);
         }

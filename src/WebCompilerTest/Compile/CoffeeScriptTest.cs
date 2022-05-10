@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebCompiler;
@@ -27,7 +28,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("CoffeeScript")]
         public void CompileCoffeeScript()
         {
-            var result = _processor.Process("../../artifacts/coffeeconfig.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/coffeeconfig.json");
             FileInfo js = new FileInfo("../../artifacts/coffee/test.js");
             FileInfo min = new FileInfo("../../artifacts/coffee/test.min.js");
             FileInfo map = new FileInfo("../../artifacts/coffee/test.js.map");
@@ -41,8 +42,8 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("CoffeeScript")]
         public void CompileCoffeeScriptWithError()
         {
-            var result = _processor.Process("../../artifacts/coffeeconfigerror.json");
-            var error = result.First().Errors[0];
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/coffeeconfigerror.json");
+            CompilerError error = result.First().Errors[0];
             Assert.AreEqual(1, error.LineNumber);
             Assert.AreEqual("unexpected ==", error.Message);
         }

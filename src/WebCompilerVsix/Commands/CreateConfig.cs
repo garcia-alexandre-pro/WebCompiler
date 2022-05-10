@@ -158,7 +158,7 @@ namespace WebCompilerVsix
             return new Config
             {
                 OutputFile = outputFile,
-                InputFile = inputfile
+                InputFileRelative = inputfile
             };
         }
 

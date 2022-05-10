@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebCompiler;
@@ -26,7 +27,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("BABEL")]
         public void CompileBabel()
         {
-            var result = _processor.Process("../../artifacts/babelconfig.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/babelconfig.json");
             Assert.IsTrue(File.Exists("../../artifacts/babel/file1.js"));
 
             string sourceMap = ScssTest.DecodeSourceMap(result.First().CompiledContent);
@@ -36,7 +37,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("BABEL")]
         public void CompileBabelError()
         {
-            var result = _processor.Process("../../artifacts/babelconfigError.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/babelconfigError.json");
             Assert.IsTrue(result.Count() == 1);
             Assert.IsTrue(result.ElementAt(0).HasErrors);
         }
@@ -44,14 +45,14 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("BABEL")]
         public void AssociateExtensionSourceFileChangedTest()
         {
-            var result = _processor.SourceFileChanged("../../artifacts/babelconfig.json", "babel/file1.jsx", null);
+            IEnumerable<CompilerResult> result = _processor.SourceFileChanged("../../artifacts/babelconfig.json", "babel/file1.jsx", null);
             Assert.AreEqual(1, result.Count());
         }
 
         [TestMethod, TestCategory("BABEL")]
         public void OtherExtensionTypeSourceFileChangedTest()
         {
-            var result = _processor.SourceFileChanged("../../artifacts/babelconfig.json", "babel/notjsx.css", null);
+            IEnumerable<CompilerResult> result = _processor.SourceFileChanged("../../artifacts/babelconfig.json", "babel/notjsx.css", null);
             Assert.AreEqual(0, result.Count<CompilerResult>());
         }
     }

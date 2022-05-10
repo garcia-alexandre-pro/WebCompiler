@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using WebCompiler;
@@ -27,7 +28,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("Iced CoffeeScript")]
         public void CompileIcedCoffeeScript()
         {
-            var result = _processor.Process("../../artifacts/icedcoffeeconfig.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/icedcoffeeconfig.json");
             FileInfo js = new FileInfo("../../artifacts/iced/test.js");
             FileInfo map = new FileInfo("../../artifacts/iced/test.js.map");
             Assert.IsTrue(js.Exists);
@@ -39,8 +40,8 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("Iced CoffeeScript")]
         public void CompileIcedCoffeeScriptWithError()
         {
-            var result = _processor.Process("../../artifacts/icedcoffeeconfigerror.json");
-            var error = result.First().Errors[0];
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/icedcoffeeconfigerror.json");
+            CompilerError error = result.First().Errors[0];
             Assert.AreEqual(1, error.LineNumber);
             Assert.AreEqual("unexpected ==", error.Message);
         }

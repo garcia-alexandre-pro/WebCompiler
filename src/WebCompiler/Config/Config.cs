@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using Microsoft.Build.Construction;
 using Newtonsoft.Json;
 
 namespace WebCompiler
@@ -27,7 +29,7 @@ namespace WebCompiler
         /// The relative file path to the input file.
         /// </summary>
         [JsonProperty("inputFile")]
-        public string InputFile { get; set; }
+        public string InputFileRelative { get; set; }
 
         /// <summary>
         /// The name of the package (in case the sources come from a nuget package and are referenced using packagereference only).
@@ -63,13 +65,69 @@ namespace WebCompiler
         internal string Output { get; set; }
 
         /// <summary>
+        /// The retrieved absolute file path to the input file.
+        /// </summary>
+        public string InputFileAbsolute
+        {
+            get
+            {
+                string baseFolder = Path.GetDirectoryName(FileName);
+                string inputFile;
+
+                // packagereference packages are stored in a different place, we'll try to retrieve their real location based on what's in the project configuration file
+                if (String.IsNullOrEmpty(PackageName))
+                {
+                    inputFile = Path.Combine(baseFolder, InputFileRelative);
+
+                    if (!File.Exists(inputFile))
+                    {
+                        throw new FileNotFoundException($"No such file found in {baseFolder}", InputFileRelative);
+                    }
+                }
+                else
+                {
+                    string projectConfigFile = Directory.GetFiles(baseFolder, "*.csproj", SearchOption.AllDirectories).SingleOrDefault()
+                        ?? Directory.GetFiles(baseFolder, "*.vbproj", SearchOption.AllDirectories).SingleOrDefault();
+
+                    if (String.IsNullOrEmpty(projectConfigFile))
+                    {
+                        throw new FileNotFoundException($"No project configuration file found in {baseFolder}");
+                    }
+
+                    ProjectRootElement projectRootElement = ProjectRootElement.Open(projectConfigFile);
+
+                    ProjectItemElement property = projectRootElement.AllChildren.SingleOrDefault(x => x.ElementName == "PackageReference" && ((ProjectItemElement)x).Include == PackageName) as ProjectItemElement;
+
+                    string packageName = property.Include;
+                    string packageVersion = (property.AllChildren.SingleOrDefault(x => x.ElementName == "Version") as ProjectMetadataElement)?.Value;
+
+                    if (String.IsNullOrEmpty(packageName) || String.IsNullOrEmpty(packageVersion))
+                    {
+                        throw new ArgumentException(nameof(PackageName), $"Wrong package name");
+                    }
+
+                    string nugetFolder = $"C:/Users/{Environment.UserName}/.nuget/packages/{packageName}/{packageVersion}/contentFiles/";
+
+                    inputFile = Path.Combine(nugetFolder, InputFileRelative);
+
+                    if (!File.Exists(inputFile))
+                    {
+                        throw new FileNotFoundException($"No such file found in {nugetFolder}", InputFileRelative);
+                    }
+                }
+
+                return inputFile;
+            }
+        }
+
+        /// <summary>
         /// Converts the relative input file to an absolute file path.
         /// </summary>
         public FileInfo GetAbsoluteInputFile()
         {
             string folder = new FileInfo(FileName).DirectoryName;
 
-            return new FileInfo(Path.Combine(folder, InputFile.Replace("/", "\\")));
+            return new FileInfo(Path.Combine(folder, InputFileRelative.Replace("/", "\\")));
         }
 
         /// <summary>

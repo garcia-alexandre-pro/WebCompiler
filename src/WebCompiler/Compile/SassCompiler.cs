@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Construction;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,13 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Xml;
 
 namespace WebCompiler
 {
     class SassCompiler : ICompiler
     {
-        private static readonly Regex _errorRx = new Regex("(?<message>.+) on line (?<line>[0-9]+), column (?<column>[0-9]+)", RegexOptions.Compiled);
+        //private static readonly Regex _errorRx = new Regex("(?<message>.+) on line (?<line>[0-9]+), column (?<column>[0-9]+)", RegexOptions.Compiled);
         private string _path;
         private string _output = string.Empty;
         private string _error = string.Empty;
@@ -25,34 +23,7 @@ namespace WebCompiler
 
         public CompilerResult Compile(Config config)
         {
-            string baseFolder = Path.GetDirectoryName(config.FileName);
-            string inputFile = Path.Combine(baseFolder, config.InputFile);
-
-            // packagereference packages are stored in a different place, we'll try to retrieve their real location based on what's in the project configuration file
-            if (!File.Exists(inputFile))
-            {
-                string projectConfigFile = Directory.GetFiles(baseFolder, "*.csproj", SearchOption.AllDirectories).SingleOrDefault()
-                    ?? Directory.GetFiles(baseFolder, "*.vbproj", SearchOption.AllDirectories).SingleOrDefault();
-
-                ProjectRootElement projectRootElement = ProjectRootElement.Open(projectConfigFile);
-
-                ProjectItemElement property = projectRootElement.AllChildren.SingleOrDefault(x => x.ElementName == "PackageReference" && ((ProjectItemElement)x).Include == config.PackageName) as ProjectItemElement;
-
-                string packageName = property.Include;
-                string packageVersion = (property.AllChildren.SingleOrDefault(x => x.ElementName == "Version") as ProjectMetadataElement)?.Value;
-
-                if (!String.IsNullOrEmpty(packageName) && !String.IsNullOrEmpty(packageVersion))
-                {
-                    string nugetFolder = $"C:/Users/{Environment.UserName}/.nuget/packages/{packageName}/{packageVersion}/contentFiles/";
-
-                    inputFile = Path.Combine(nugetFolder, config.InputFile);
-
-                    if (!File.Exists(inputFile))
-                    {
-                        throw new FileNotFoundException($"No such file found neither in {baseFolder} nor in {nugetFolder}", config.InputFile);
-                    }
-                }
-            }
+            string inputFile = config.InputFileAbsolute;
 
             FileInfo info = new FileInfo(inputFile);
             string content = File.ReadAllText(info.FullName);

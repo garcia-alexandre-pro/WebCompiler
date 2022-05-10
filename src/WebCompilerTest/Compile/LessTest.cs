@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -33,7 +34,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("LESS")]
         public void CompileLess()
         {
-            var result = _processor.Process("../../artifacts/lessconfig.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/lessconfig.json");
             Assert.IsTrue(result.All(r => !r.HasErrors));
             Assert.IsTrue(File.Exists("../../artifacts/less/test.css"));
             Assert.IsTrue(File.Exists("../../artifacts/less/test.min.css"));
@@ -54,7 +55,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("LESS")]
         public void CompileLessWithError()
         {
-            var result = _processor.Process("../../artifacts/lessconfigerror.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/lessconfigerror.json");
             Assert.IsTrue(result.Any(r => r.HasErrors));
             Assert.IsTrue(result.Count() == 1);
             Assert.IsTrue(result.ElementAt(0).HasErrors);
@@ -63,7 +64,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("LESS")]
         public void CompileLessWithParsingExceptionError()
         {
-            var result = _processor.Process("../../artifacts/lessconfigParseerror.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/lessconfigParseerror.json");
             Assert.IsTrue(result.Any(r => r.HasErrors));
             Assert.IsTrue(result.Count() == 1);
             Assert.IsTrue(result.ElementAt(0).HasErrors);
@@ -74,14 +75,14 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("LESS")]
         public void CompileLessWithOptions()
         {
-            var result = ConfigHandler.GetConfigs("../../artifacts/lessconfig.json");
+            IEnumerable<WebCompiler.Config> result = ConfigHandler.GetConfigs("../../artifacts/lessconfig.json");
             Assert.IsTrue(result.First().Options.Count == 2);
         }
 
         [TestMethod, TestCategory("LESS")]
         public void AssociateExtensionSourceFileChangedTest()
         {
-            var result = _processor.SourceFileChanged("../../artifacts/lessconfig.json", "less/test.less", null);
+            IEnumerable<CompilerResult> result = _processor.SourceFileChanged("../../artifacts/lessconfig.json", "less/test.less", null);
             Assert.IsTrue(result.All(r => !r.HasErrors));
             Assert.AreEqual(2, result.Count<CompilerResult>());
         }
@@ -89,7 +90,7 @@ namespace WebCompilerTest
         [TestMethod, TestCategory("LESS")]
         public void OtherExtensionTypeSourceFileChangedTest()
         {
-            var result = _processor.SourceFileChanged("../../artifacts/lessconfig.json", "scss/test.scss", null);
+            IEnumerable<CompilerResult> result = _processor.SourceFileChanged("../../artifacts/lessconfig.json", "scss/test.scss", null);
             Assert.IsTrue(result.All(r => !r.HasErrors));
             Assert.AreEqual(0, result.Count<CompilerResult>());
         }
@@ -104,13 +105,13 @@ namespace WebCompilerTest
             File.WriteAllText("../../artifacts/less/circrefa.min.css", string.Empty);
 
             // Since the outputs were generated after the inputs, no compilation should have occurred
-            var result = _processor.Process("../../artifacts/lessconfigCircRef.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/lessconfigCircRef.json");
             Assert.AreEqual(0, result.Count<CompilerResult>());
         }
 
         public void CompileLessLegacyStrictMath()
         {
-            var result = _processor.Process("../../artifacts/lessconfigLegacyStrictMath.json");
+            IEnumerable<CompilerResult> result = _processor.Process("../../artifacts/lessconfigLegacyStrictMath.json");
             Assert.IsTrue(result.All(r => !r.HasErrors || r.Errors.All(e => e.IsWarning)));
         }
     }
