@@ -63,7 +63,7 @@ namespace WebCompiler
         {
             IEnumerable<Config> configs = ConfigHandler.GetConfigs(configFile);
 
-            foreach (var item in configs)
+            foreach (Config item in configs)
             {
                 string outputFile = item.GetAbsoluteOutputFile().FullName;
                 string minFile = Path.ChangeExtension(outputFile, ".min" + Path.GetExtension(outputFile));
@@ -253,42 +253,27 @@ namespace WebCompiler
 
         private void OnBeforeProcess(Config config, string baseFolder, bool containsChanges)
         {
-            if (BeforeProcess != null)
-            {
-                BeforeProcess(this, new CompileFileEventArgs(config, baseFolder, containsChanges));
-            }
+            BeforeProcess?.Invoke(this, new CompileFileEventArgs(config, baseFolder, containsChanges));
         }
 
         private void OnConfigProcessed(Config config, int amountProcessed, int total)
         {
-            if (ConfigProcessed != null)
-            {
-                ConfigProcessed(this, new ConfigProcessedEventArgs(config, amountProcessed, total));
-            }
+            ConfigProcessed?.Invoke(this, new ConfigProcessedEventArgs(config, amountProcessed, total));
         }
 
         private void OnAfterProcess(Config config, string baseFolder, bool containsChanges)
         {
-            if (AfterProcess != null)
-            {
-                AfterProcess(this, new CompileFileEventArgs(config, baseFolder, containsChanges));
-            }
+            AfterProcess?.Invoke(this, new CompileFileEventArgs(config, baseFolder, containsChanges));
         }
 
         private void OnBeforeWritingSourceMap(string file, string mapFile, bool containsChanges)
         {
-            if (BeforeWritingSourceMap != null)
-            {
-                BeforeWritingSourceMap(this, new SourceMapEventArgs(file, mapFile, containsChanges));
-            }
+            BeforeWritingSourceMap?.Invoke(this, new SourceMapEventArgs(file, mapFile, containsChanges));
         }
 
         private void OnAfterWritingSourceMap(string file, string mapFile, bool containsChanges)
         {
-            if (AfterWritingSourceMap != null)
-            {
-                AfterWritingSourceMap(this, new SourceMapEventArgs(file, mapFile, containsChanges));
-            }
+            AfterWritingSourceMap?.Invoke(this, new SourceMapEventArgs(file, mapFile, containsChanges));
         }
 
         /// <summary>

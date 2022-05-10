@@ -30,6 +30,12 @@ namespace WebCompiler
         public string InputFile { get; set; }
 
         /// <summary>
+        /// The name of the package (in case the sources come from a nuget package and are referenced using packagereference only).
+        /// </summary>
+        [JsonProperty("packageName")]
+        public string PackageName { get; set; }
+
+        /// <summary>
         /// Settings for the minification.
         /// </summary>
         [JsonProperty("minify")]
@@ -62,6 +68,7 @@ namespace WebCompiler
         public FileInfo GetAbsoluteInputFile()
         {
             string folder = new FileInfo(FileName).DirectoryName;
+
             return new FileInfo(Path.Combine(folder, InputFile.Replace("/", "\\")));
         }
 
@@ -71,6 +78,7 @@ namespace WebCompiler
         public FileInfo GetAbsoluteOutputFile()
         {
             string folder = new FileInfo(FileName).DirectoryName;
+
             return new FileInfo(Path.Combine(folder, OutputFile.Replace("/", "\\")));
         }
 
@@ -93,8 +101,8 @@ namespace WebCompiler
 
         private bool HasDependenciesNewerThanOutput(FileInfo input, FileInfo output)
         {
-            var projectRoot = new FileInfo(FileName).DirectoryName;
-            var dependencies = DependencyService.GetDependencies(projectRoot, input.FullName);
+            string projectRoot = new FileInfo(FileName).DirectoryName;
+            Dictionary<string, Dependencies> dependencies = DependencyService.GetDependencies(projectRoot, input.FullName);
 
             if (dependencies != null)
             {
@@ -115,12 +123,12 @@ namespace WebCompiler
             if (!dependencies.ContainsKey(key))
                 return false;
 
-            foreach (var file in dependencies[key].DependentOn.ToArray())
+            foreach (string file in dependencies[key].DependentOn.ToArray())
             {
                 if (checkedDependencies.Contains(file))
                     continue;
 
-                var fileInfo = new FileInfo(file);
+                FileInfo fileInfo = new FileInfo(file);
 
                 if (!fileInfo.Exists)
                     continue;
@@ -161,6 +169,7 @@ namespace WebCompiler
         public bool ShouldSerializeIncludeInProject()
         {
             Config config = new Config();
+
             return IncludeInProject != config.IncludeInProject;
         }
 
@@ -168,6 +177,7 @@ namespace WebCompiler
         public bool ShouldSerializeMinify()
         {
             Config config = new Config();
+
             return !DictionaryEqual(Minify, config.Minify, null);
         }
 
@@ -175,6 +185,7 @@ namespace WebCompiler
         public bool ShouldSerializeOptions()
         {
             Config config = new Config();
+
             return !DictionaryEqual(Options, config.Options, null);
         }
 
@@ -190,10 +201,10 @@ namespace WebCompiler
 
             foreach (KeyValuePair<TKey, TValue> kvp in first)
             {
-                TValue secondValue;
-                if (!second.TryGetValue(kvp.Key, out secondValue)) return false;
+                if (!second.TryGetValue(kvp.Key, out TValue secondValue)) return false;
                 if (!valueComparer.Equals(kvp.Value, secondValue)) return false;
             }
+
             return true;
         }
     }

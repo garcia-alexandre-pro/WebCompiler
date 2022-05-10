@@ -57,7 +57,7 @@ namespace WebCompilerVsix
             {
                 try
                 {
-                    var result = Processor.Process(configFile, configs, force);
+                    IEnumerable<CompilerResult> result = Processor.Process(configFile, configs, force);
                     ErrorListService.ProcessCompilerResults(result);
 
                     if (!result.Any(c => c.HasErrors))
@@ -95,10 +95,10 @@ namespace WebCompilerVsix
                 {
                     WebCompilerInitPackage.StatusText($"Compiling...");
 
-                    var activeProject = ProjectHelpers.GetActiveProject();
-                    var projectRoot = ProjectHelpers.GetRootFolder(activeProject);
+                    EnvDTE.Project activeProject = ProjectHelpers.GetActiveProject();
+                    string projectRoot = ProjectHelpers.GetRootFolder(activeProject);
 
-                    var result = Processor.SourceFileChanged(configFile, sourceFile, projectRoot);
+                    IEnumerable<CompilerResult> result = Processor.SourceFileChanged(configFile, sourceFile, projectRoot);
                     ErrorListService.ProcessCompilerResults(result);
                 }
                 catch (FileNotFoundException ex)
@@ -127,7 +127,7 @@ namespace WebCompilerVsix
             if (!e.Config.IncludeInProject || !e.ContainsChanges)
                 return;
 
-            var item = _dte.Solution.FindProjectItem(e.Config.FileName);
+            EnvDTE.ProjectItem item = _dte.Solution.FindProjectItem(e.Config.FileName);
 
             if (item == null || item.ContainingProject == null)
                 return;
@@ -142,8 +142,8 @@ namespace WebCompilerVsix
 
             if (inputWithOutputExtension.Equals(output.FullName, StringComparison.OrdinalIgnoreCase))
             {
-                var inputItem = _dte.Solution.FindProjectItem(input.FullName);
-                var outputItem = _dte.Solution.FindProjectItem(output.FullName);
+                EnvDTE.ProjectItem inputItem = _dte.Solution.FindProjectItem(input.FullName);
+                EnvDTE.ProjectItem outputItem = _dte.Solution.FindProjectItem(output.FullName);
 
                 // Only add output file to project if it isn't already
                 if (inputItem != null && outputItem == null)

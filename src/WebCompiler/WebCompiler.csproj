@@ -2,7 +2,7 @@
     <Import Project="..\common.props" />
     <PropertyGroup>
         <OutputType>Exe</OutputType>
-        <TargetFrameworks>net48;netstandard2.0;netcoreapp3.1;net5.0</TargetFrameworks>
+        <TargetFrameworks>net472;net5.0</TargetFrameworks>
 
         <Title>Web Compiler</Title>
         <PackageId>BuildWebCompiler</PackageId>
@@ -27,6 +27,7 @@
         <EmbeddedResource Include="Node\7za.exe" />
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="Microsoft.Build" Version="16.11.0" />
         <PackageReference Include="Microsoft.Build.Framework" Version="16.11.0" PrivateAssets="All" />
         <PackageReference Include="Microsoft.Build.Utilities.Core" Version="16.11.0" PrivateAssets="All" />
         <PackageReference Include="Newtonsoft.Json" Version="12.0.3" PrivateAssets="All"></PackageReference>

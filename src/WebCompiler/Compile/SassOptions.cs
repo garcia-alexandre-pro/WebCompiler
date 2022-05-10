@@ -27,7 +27,7 @@ namespace WebCompiler
 
             string loadPaths = GetValue(config, "loadPaths");
             if (loadPaths != null)
-                LoadPaths = loadPaths.Split(separators, System.StringSplitOptions.RemoveEmptyEntries);
+                LoadPaths = loadPaths.Split(separators, StringSplitOptions.RemoveEmptyEntries);
 
             string style = GetValue(config, "style");
             if (style != null && Enum.TryParse(style.ToString(), true, out SassStyle styleValue))

@@ -37,10 +37,12 @@ namespace WebCompiler
 
                 //remove the dependencies registration of this file
                 this.Dependencies[path].DependentOn = new HashSet<string>();
+
                 //remove the dependentfile registration of this file for all other files
-                foreach (var dependenciesPath in Dependencies.Keys)
+                foreach (string dependenciesPath in Dependencies.Keys)
                 {
-                    var lowerDependenciesPath = dependenciesPath.ToLowerInvariant();
+                    string lowerDependenciesPath = dependenciesPath.ToLowerInvariant();
+
                     if (Dependencies[lowerDependenciesPath].DependentFiles.Contains(path))
                     {
                         Dependencies[lowerDependenciesPath].DependentFiles.Remove(path);
@@ -50,17 +52,18 @@ namespace WebCompiler
                 string content = File.ReadAllText(info.FullName);
 
                 //match both <@import "myFile.scss";> and <@import url("myFile.scss");> syntax
-                var matches = Regex.Matches(content, @"(?<=@import(?:[\s]+))(?:(?:\(\w+\)))?\s*(?:url)?(?<url>[^;]+)", RegexOptions.Multiline);
+                MatchCollection matches = Regex.Matches(content, @"(?<=@import(?:[\s]+))(?:(?:\(\w+\)))?\s*(?:url)?(?<url>[^;]+)", RegexOptions.Multiline);
+
                 foreach (Match match in matches)
                 {
-                    var importedfiles = GetFileInfos(info, match);
+                    IEnumerable<FileInfo> importedfiles = GetFileInfos(info, match);
 
                     foreach (FileInfo importedfile in importedfiles)
                     {
                         if (importedfile == null)
                             continue;
 
-                        var theFile = importedfile;
+                        FileInfo theFile = importedfile;
 
                         //if the file doesn't end with the correct extension, an import statement without extension is probably used, to re-add the extension (#175)
                         if (string.Compare(importedfile.Extension, FileExtension, StringComparison.OrdinalIgnoreCase) != 0)
@@ -68,14 +71,14 @@ namespace WebCompiler
                             theFile = new FileInfo(importedfile.FullName + this.FileExtension);
                         }
 
-                        var dependencyFilePath = theFile.FullName.ToLowerInvariant();
+                        string dependencyFilePath = theFile.FullName.ToLowerInvariant();
 
                         if (!File.Exists(dependencyFilePath))
                         {
                             // Trim leading underscore to support Sass partials
-                            var dir = Path.GetDirectoryName(dependencyFilePath);
-                            var fileName = Path.GetFileName(dependencyFilePath);
-                            var cleanPath = Path.Combine(dir, "_" + fileName);
+                            string dir = Path.GetDirectoryName(dependencyFilePath);
+                            string fileName = Path.GetFileName(dependencyFilePath);
+                            string cleanPath = Path.Combine(dir, "_" + fileName);
 
                             if (!File.Exists(cleanPath))
                                 continue;
@@ -99,7 +102,7 @@ namespace WebCompiler
         private static IEnumerable<FileInfo> GetFileInfos(FileInfo info, System.Text.RegularExpressions.Match match)
         {
             string url = match.Groups["url"].Value.Replace("'", "\"").Replace("(", "").Replace(")", "").Replace(";", "").Trim();
-            var list = new List<FileInfo>();
+            List<FileInfo> list = new List<FileInfo>();
 
             foreach (string name in url.Split(new[] { "\"," }, StringSplitOptions.RemoveEmptyEntries))
             {

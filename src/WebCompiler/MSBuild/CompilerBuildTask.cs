@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -45,7 +46,7 @@ namespace WebCompiler
 
             try
             {
-                var results = processor.Process(configFile.FullName);
+                IEnumerable<CompilerResult> results = processor.Process(configFile.FullName);
                 bool isSuccessful = true;
 
                 foreach (CompilerResult result in results)
@@ -62,11 +63,13 @@ namespace WebCompiler
                 }
 
                 Log.LogMessage(MessageImportance.High, "WebCompiler: Done compiling " + configFile.Name);
+
                 return isSuccessful;
             }
             catch (Exception ex)
             {
                 Log.LogError(ex.Message);
+
                 return false;
             }
         }

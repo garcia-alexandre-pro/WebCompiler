@@ -24,8 +24,8 @@ namespace WebCompiler
             ConfigFileProcessor processor = new ConfigFileProcessor();
             EventHookups(processor, configPath);
 
-            var results = processor.Process(configPath, configs);
-            var errorResults = results.Where(r => r.HasErrors);
+            IEnumerable<CompilerResult> results = processor.Process(configPath, configs);
+            IEnumerable<CompilerResult> errorResults = results.Where(r => r.HasErrors);
 
             foreach (CompilerResult result in errorResults)
             {

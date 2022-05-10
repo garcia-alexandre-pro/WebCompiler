@@ -102,6 +102,18 @@
       <Link>Newtonsoft.Json.dll</Link>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.dll">
+      <Link>Microsoft.Build.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.Framework.dll">
+      <Link>Microsoft.Build.Framework.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.Utilities.Core.dll">
+      <Link>Microsoft.Build.Utilities.Core.dll</Link>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="registry.pkgdef">
       <IncludeInVSIX>true</IncludeInVSIX>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
