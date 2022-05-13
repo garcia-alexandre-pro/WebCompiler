@@ -22,7 +22,7 @@ namespace WebCompiler
             }
 
             ConfigFileProcessor processor = new ConfigFileProcessor();
-            EventHookups(processor, configPath);
+            EventHookups(processor/*, configPath*/);
 
             IEnumerable<CompilerResult> results = processor.Process(configPath, configs);
             IEnumerable<CompilerResult> errorResults = results.Where(r => r.HasErrors);
@@ -38,11 +38,11 @@ namespace WebCompiler
             return errorResults.Any() ? 1 : 0;
         }
 
-        private static void EventHookups(ConfigFileProcessor processor, string configPath)
+        private static void EventHookups(ConfigFileProcessor processor/*, string configPath*/)
         {
             // For console colors, see http://stackoverflow.com/questions/23975735/what-is-this-u001b9-syntax-of-choosing-what-color-text-appears-on-console
 
-            processor.BeforeProcess += (s, e) => { Console.WriteLine($"Processing \x1B[36m{e.Config.InputFileRelative}"); if (e.ContainsChanges) FileHelpers.RemoveReadonlyFlagFromFile(e.Config.GetAbsoluteOutputFile()); };
+            processor.BeforeProcess += (s, e) => { Console.WriteLine($"Processing \x1B[36m{e.Config.InputFile}"); if (e.ContainsChanges) FileHelpers.RemoveReadonlyFlagFromFile(e.Config.GetAbsoluteOutputFile()); };
             processor.AfterProcess += (s, e) => { Console.WriteLine($"  \x1B[32mCompiled"); };
             processor.BeforeWritingSourceMap += (s, e) => { if (e.ContainsChanges) FileHelpers.RemoveReadonlyFlagFromFile(e.ResultFile); };
             processor.AfterWritingSourceMap += (s, e) => { Console.WriteLine($"  \x1B[32mSourcemap"); };
@@ -64,9 +64,9 @@ namespace WebCompiler
             if (file != null)
             {
                 if (file.StartsWith("*"))
-                    configs = configs.Where(c => Path.GetExtension(c.InputFileRelative).Equals(file.Substring(1), StringComparison.OrdinalIgnoreCase));
+                    configs = configs.Where(c => Path.GetExtension(c.InputFile).Equals(file.Substring(1), StringComparison.OrdinalIgnoreCase));
                 else
-                    configs = configs.Where(c => c.InputFileRelative.Equals(file, StringComparison.OrdinalIgnoreCase));
+                    configs = configs.Where(c => c.InputFile.Equals(file, StringComparison.OrdinalIgnoreCase));
             }
 
             return configs;

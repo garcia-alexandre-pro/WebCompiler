@@ -1,210 +1,207 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
-    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
-    <UseCodebase>true</UseCodebase>
-    <StartAction>Program</StartAction>
-    <StartProgram>$(DevEnvDir)\devenv.exe</StartProgram>
-    <StartArguments>/rootsuffix Exp</StartArguments>
-    <ZipPackageCompressionLevel>Normal</ZipPackageCompressionLevel>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <ProjectGuid>{49C270BE-9645-40D5-BE08-91ADE243D394}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>WebCompilerVsix</RootNamespace>
-    <AssemblyName>WebCompilerVsix</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <GeneratePkgDefFile>true</GeneratePkgDefFile>
-    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
-    <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
-    <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
-    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
-    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Adornments\AdornmentLayer.cs" />
-    <Compile Include="Adornments\AdornmentProvider.cs" />
-    <Compile Include="Adornments\GeneratedAdornment.cs" />
-    <Compile Include="Adornments\LogoAdornment.cs" />
-    <Compile Include="Commands\CompileOnBuild.cs" />
-    <Compile Include="Commands\CompileAllFiles.cs" />
-    <Compile Include="Commands\CleanOutputFiles.cs" />
-    <Compile Include="Commands\RemoveConfig.cs" />
-    <Compile Include="CompilerService.cs" />
-    <Compile Include="Commands\Recompile.cs" />
-    <Compile Include="Commands\CreateConfig.cs" />
-    <Compile Include="Constants.cs" />
-    <Compile Include="ContentType\HandlebarsContentTypeDefinition.cs" />
-    <Compile Include="ContentType\HBSContentTypeDefinition.cs" />
-    <Compile Include="ContentType\SassContentTypeDefinition.cs" />
-    <Compile Include="ContentType\StylContentTypeDefinition.cs" />
-    <Compile Include="ContentType\StylusContentTypeDefinition.cs" />
-    <Compile Include="ErrorList\ErrorListService.cs" />
-    <Compile Include="ErrorList\SinkManager.cs" />
-    <Compile Include="ErrorList\TableDataSource.cs" />
-    <Compile Include="ErrorList\TableEntriesSnapshot.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="TaskRunner\TaskRunnerConfig.cs" />
-    <Compile Include="TaskRunner\WebCompilerTaskRunner.cs" />
-    <Compile Include="WebCompilerPackage.cs" />
-    <Compile Include="Helpers\ProjectHelpers.cs" />
-    <Compile Include="FileListeners\SourceFileCreationListener.cs" />
-    <Compile Include="FileListeners\JsonCreationListener.cs" />
-    <Compile Include="JSON\CompilerConfigSchemaSelector.cs" />
-    <Compile Include="JSON\RelativeFilePathFormatProvider.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VSPackage.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>VSPackage.vsct</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="..\..\LICENSE">
-      <Link>Resources\LICENSE</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\WebCompiler.pdb">
-      <Link>WebCompiler.pdb</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Newtonsoft.Json.dll">
-      <Link>Newtonsoft.Json.dll</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.dll">
-      <Link>Microsoft.Build.dll</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.Framework.dll">
-      <Link>Microsoft.Build.Framework.dll</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.Utilities.Core.dll">
-      <Link>Microsoft.Build.Utilities.Core.dll</Link>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="registry.pkgdef">
-      <IncludeInVSIX>true</IncludeInVSIX>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\logo.png">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="Resources\Package.ico" />
-    <Content Include="Resources\preview.png">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="JSON\compilerconfig-schema.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="JSON\compilerdefaults-schema.json">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <None Include="JSON\compilerdefaults.json" />
-    <None Include="JSON\compilerconfig.json" />
-    <None Include="source.extension.vsixmanifest">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <VSCTCompile Include="VSPackage.vsct">
-      <ResourceName>Menus.ctmenu</ResourceName>
-      <Generator>VsctGenerator</Generator>
-      <LastGenOutput>VSPackage.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </VSCTCompile>
-    <Content Include="Resources\icon.png">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="VSPackage.resx">
-      <MergeWithCTO>true</MergeWithCTO>
-      <ManifestResourceName>VSPackage</ManifestResourceName>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.VisualStudio.Threading, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.Utilities, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.ServiceHub.Analyzers">
-      <Version>3.1.3053</Version>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.SDK">
-      <Version>16.10.31321.278</Version>
-    </PackageReference>
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>12.0.3</Version>
-    </PackageReference>
-    <PackageReference Include="NuGet.VisualStudio">
-      <Version>5.11.0</Version>
-    </PackageReference>
-    <PackageReference Include="NUglify">
-      <Version>1.20.0</Version>
-    </PackageReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\WebCompiler\WebCompiler.csproj">
-      <Project>{b714b5b9-27c4-443c-9517-fe5c5ef46ea2}</Project>
-      <Name>WebCompiler</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />
-  <ProjectExtensions />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <MinimumVisualStudioVersion>$(VisualStudioVersion)</MinimumVisualStudioVersion>
+        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+        <!--<UseCodebase>true</UseCodebase>-->
+        <UseCodebase Condition="'$(UseCodebase)'==''">true</UseCodebase>
+        <VSCTResourceName Condition="'$(VSCTResourceName)'==''">Menus.ctmenu</VSCTResourceName>
+        <StartAction>Program</StartAction>
+        <StartProgram>$(DevEnvDir)\devenv.exe</StartProgram>
+        <StartArguments>/rootsuffix Exp</StartArguments>
+        <ZipPackageCompressionLevel>Normal</ZipPackageCompressionLevel>
+        <TargetFramework>net48</TargetFramework>
+        <TargetFrameworkProfile />
+        <NuGetPackageImportStamp>
+        </NuGetPackageImportStamp>
+    </PropertyGroup>
+    <PropertyGroup>
+        <SignAssembly>true</SignAssembly>
+    </PropertyGroup>
+    <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectTypeGuids>{82b43b9b-a64c-4715-b499-d71e9ca2bd60};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+        <ProjectGuid>{49C270BE-9645-40D5-BE08-91ADE243D394}</ProjectGuid>
+        <OutputType>Library</OutputType>
+        <AppDesignerFolder>Properties</AppDesignerFolder>
+        <RootNamespace>WebCompilerVsix</RootNamespace>
+        <AssemblyName>WebCompilerVsix</AssemblyName>
+        <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+        <GeneratePkgDefFile>true</GeneratePkgDefFile>
+        <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+        <IncludeDebugSymbolsInVSIXContainer>true</IncludeDebugSymbolsInVSIXContainer>
+        <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
+        <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+        <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+        <DebugSymbols>true</DebugSymbols>
+        <DebugType>full</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Debug\</OutputPath>
+        <DefineConstants>DEBUG;TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+        <DebugType>pdbonly</DebugType>
+        <Optimize>true</Optimize>
+        <OutputPath>bin\Release\</OutputPath>
+        <DefineConstants>TRACE</DefineConstants>
+        <ErrorReport>prompt</ErrorReport>
+        <WarningLevel>4</WarningLevel>
+        <PlatformTarget>x86</PlatformTarget>
+    </PropertyGroup>
+    <ItemGroup>
+        <Content Include="..\WebCompilerVsix\bin\$(Configuration)\WebCompiler.pdb">
+            <Link>WebCompiler.pdb</Link>
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Newtonsoft.Json.dll">
+            <Link>Newtonsoft.Json.dll</Link>
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.dll">
+            <Link>Microsoft.Build.dll</Link>
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.Framework.dll">
+            <Link>Microsoft.Build.Framework.dll</Link>
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="..\WebCompilerVsix\bin\$(Configuration)\Microsoft.Build.Utilities.Core.dll">
+            <Link>Microsoft.Build.Utilities.Core.dll</Link>
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="..\WebCompilerVsix\bin\$(Configuration)\System.Threading.Tasks.Dataflow.dll">
+            <Link>System.Threading.Tasks.Dataflow.dll</Link>
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+        <Content Include="registry.pkgdef">
+            <IncludeInVSIX>true</IncludeInVSIX>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <None Include="source.extension.vsixmanifest">
+            <SubType>Designer</SubType>
+        </None>
+    </ItemGroup>
+    <ItemGroup Condition="'$(SkipVSIXDefaults)'!='true' AND 'EnableDefaultItems'!='false'">
+        <None Update="**\*.vsixmanifest">
+            <SubType>Designer</SubType>
+        </None>
+
+        <Content Include="Resources\icon.png">
+            <IncludeInVSIX>true</IncludeInVSIX>
+        </Content>
+
+        <!-- Neutral VSPackage resources -->
+        <EmbeddedResource Update="VSPackage.resx">
+            <MergeWithCTO>true</MergeWithCTO>
+            <ManifestResourceName>VSPackage</ManifestResourceName>
+        </EmbeddedResource>
+
+        <!-- Localized VSPackage resources -->
+        <EmbeddedResource Update="VSPackage.*.resx">
+            <MergeWithCTO>true</MergeWithCTO>
+            <LogicalName>%(FileName).resources</LogicalName>
+            <DependentUpon>VSPackage.resx</DependentUpon>
+        </EmbeddedResource>
+
+        <_VSCTLocalizedFiles Include="*.*.vsct" />
+        <_VSCTNeutralFile Include="*.vsct" Exclude="@(_VSCTLocalizedFiles)" />
+
+        <!-- Neutral .vsct file, only include if there are no localized files -->
+        <VSCTCompile Include="@(_VSCTNeutralFile)" Condition="@(_VSCTLocalizedFiles->'%(Identity)')==''">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <ResourceName>$(VSCTResourceName)</ResourceName>
+            <SubType>Designer</SubType>
+        </VSCTCompile>
+
+        <!-- Localized .vsct files -->
+        <VSCTCompile Include="@(_VSCTLocalizedFiles)">
+            <AutoGen>True</AutoGen>
+            <DesignTime>True</DesignTime>
+            <ResourceName>$(VSCTResourceName)</ResourceName>
+            <SubType>Designer</SubType>
+            <DependentUpon>@(_VSCTNeutralFile)</DependentUpon>
+        </VSCTCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <Reference Include="Microsoft.CSharp" />
+        <!--<Reference Include="Microsoft.VisualStudio.Threading, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+        <Reference Include="Microsoft.VisualStudio.Utilities, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+            <Private>False</Private>
+        </Reference>-->
+        <Reference Include="PresentationCore" />
+        <Reference Include="PresentationFramework" />
+        <Reference Include="System" />
+        <Reference Include="System.ComponentModel.Composition" />
+        <Reference Include="System.Design" />
+        <Reference Include="System.Windows.Forms" />
+        <Reference Include="System.Xaml" />
+        <Reference Include="System.Xml" />
+        <Reference Include="WindowsBase" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Build">
+            <Version>16.11.0</Version>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Build.Utilities.Core">
+            <Version>16.11.0</Version>
+        </PackageReference>
+        <PackageReference Include="Microsoft.ServiceHub.Analyzers">
+            <Version>3.1.3053</Version>
+        </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.SDK" Version="16.10.31321.278" />
+        <PackageReference Include="Newtonsoft.Json">
+            <Version>12.0.3</Version>
+        </PackageReference>
+        <PackageReference Include="NuGet.VisualStudio" Version="5.11.0" />
+        <PackageReference Include="NUglify">
+            <Version>1.20.0</Version>
+        </PackageReference>
+        <PackageReference Include="System.Threading.Tasks.Dataflow">
+            <Version>6.0.0</Version>
+        </PackageReference>
+        <PackageReference Include="VSIX-SdkProjectAdapter">
+            <Version>3.0.0</Version>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\WebCompiler\WebCompiler.csproj">
+            <Project>{b714b5b9-27c4-443c-9517-fe5c5ef46ea2}</Project>
+            <Name>WebCompiler</Name>
+        </ProjectReference>
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+    <!--<Import Project="$(VSToolsPath)\VSSDK\Microsoft.VsSDK.targets" Condition="'$(VSToolsPath)' != ''" />-->
+    <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
   <Target Name="AfterBuild">
   </Target>
   -->
+    <Target Name="AssignEnCultureToNeutralCto" BeforeTargets="MergeCtoResource">
+        <ItemGroup>
+            <_GeneratedCTOFilesWithCulture Include="@(_GeneratedCTOFilesWithNoCulture)">
+                <Culture>en</Culture>
+                <WithCulture>true</WithCulture>
+            </_GeneratedCTOFilesWithCulture>
+            <_GeneratedCTOFilesWithNoCulture Remove="@(_GeneratedCTOFilesWithNoCulture)" />
+            <_ResourcesToMergeWithCTOWithCultureMetadata Condition="'%(WithCulture)' != 'true'">
+                <Culture>en</Culture>
+                <WithCulture>true</WithCulture>
+            </_ResourcesToMergeWithCTOWithCultureMetadata>
+        </ItemGroup>
+    </Target>
+    <ProjectExtensions />
 </Project>

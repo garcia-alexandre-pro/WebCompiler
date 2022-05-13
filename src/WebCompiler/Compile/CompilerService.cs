@@ -31,7 +31,7 @@ namespace WebCompiler
 
         internal static ICompiler GetCompiler(Config config)
         {
-            string ext = Path.GetExtension(config.InputFileRelative).ToUpperInvariant();
+            string ext = Path.GetExtension(config.InputFile).ToUpperInvariant();
             ICompiler compiler = null;
 
             Initialize();

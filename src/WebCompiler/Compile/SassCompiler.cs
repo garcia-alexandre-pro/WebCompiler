@@ -23,9 +23,7 @@ namespace WebCompiler
 
         public CompilerResult Compile(Config config)
         {
-            string inputFile = config.InputFileAbsolute;
-
-            FileInfo info = new FileInfo(inputFile);
+            FileInfo info = config.GetAbsoluteInputFile();
             string content = File.ReadAllText(info.FullName);
 
             CompilerResult result = new CompilerResult

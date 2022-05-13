@@ -34,7 +34,7 @@ namespace WebCompilerTest.Config
             _config = new WebCompiler.Config
             {
                 FileName = configFileInfo.FullName,
-                InputFileRelative = _inputFileInfo.FullName,
+                InputFile = _inputFileInfo.FullName,
                 OutputFile = _outputFileInfo.FullName
             };
 

@@ -4,6 +4,9 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Microsoft.Build.Construction;
+using Microsoft.Build.Evaluation;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 using Newtonsoft.Json;
 
 namespace WebCompiler
@@ -29,7 +32,7 @@ namespace WebCompiler
         /// The relative file path to the input file.
         /// </summary>
         [JsonProperty("inputFile")]
-        public string InputFileRelative { get; set; }
+        public string InputFile { get; set; }
 
         /// <summary>
         /// The name of the package (in case the sources come from a nuget package and are referenced using packagereference only).
@@ -65,41 +68,60 @@ namespace WebCompiler
         internal string Output { get; set; }
 
         /// <summary>
-        /// The retrieved absolute file path to the input file.
+        /// Converts the relative input file to an absolute file path.
         /// </summary>
-        public string InputFileAbsolute
+        public FileInfo GetAbsoluteInputFile()
         {
-            get
+            try
             {
-                string baseFolder = Path.GetDirectoryName(FileName);
+                string folder = Path.GetDirectoryName(FileName);
                 string inputFile;
+
+                Console.WriteLine($"\x1B[36mPackageName: \x1B[33m{PackageName}");
+                Console.WriteLine($"\x1B[36mFileName: \x1B[33m{FileName}");
+                Console.WriteLine($"\x1B[36mfolder: \x1B[33m{folder}");
 
                 // packagereference packages are stored in a different place, we'll try to retrieve their real location based on what's in the project configuration file
                 if (String.IsNullOrEmpty(PackageName))
                 {
-                    inputFile = Path.Combine(baseFolder, InputFileRelative);
+                    Console.WriteLine($"\x1B[36mPackageName is null");
+
+                    inputFile = Path.Combine(folder, InputFile);
+
+                    Console.WriteLine($"\x1B[36minputFile: \x1B[33m{inputFile}");
 
                     if (!File.Exists(inputFile))
                     {
-                        throw new FileNotFoundException($"No such file found in {baseFolder}", InputFileRelative);
+                        throw new FileNotFoundException($"No such file found in {folder}", InputFile);
                     }
                 }
                 else
                 {
-                    string projectConfigFile = Directory.GetFiles(baseFolder, "*.csproj", SearchOption.AllDirectories).SingleOrDefault()
-                        ?? Directory.GetFiles(baseFolder, "*.vbproj", SearchOption.AllDirectories).SingleOrDefault();
+                    Console.WriteLine($"\x1B[36mPackageName is not null");
+
+                    string projectConfigFile = Directory.GetFiles(folder, "*.csproj", SearchOption.AllDirectories).SingleOrDefault()
+                        ?? Directory.GetFiles(folder, "*.vbproj", SearchOption.AllDirectories).SingleOrDefault();
+
+                    Console.WriteLine($"\x1B[36mprojectConfigFile: \x1B[33m{projectConfigFile}");
 
                     if (String.IsNullOrEmpty(projectConfigFile))
                     {
-                        throw new FileNotFoundException($"No project configuration file found in {baseFolder}");
+                        throw new FileNotFoundException($"No project configuration file found in {folder}");
                     }
 
-                    ProjectRootElement projectRootElement = ProjectRootElement.Open(projectConfigFile);
+                    Project project = ProjectCollection.GlobalProjectCollection.LoadProject(projectConfigFile);
+
+                    ProjectRootElement projectRootElement = project.Xml;//ProjectRootElement.Open(projectConfigFile);
 
                     ProjectItemElement property = projectRootElement.AllChildren.SingleOrDefault(x => x.ElementName == "PackageReference" && ((ProjectItemElement)x).Include == PackageName) as ProjectItemElement;
 
+                    //ProjectCollection.GlobalProjectCollection.UnloadProject(project);
+
                     string packageName = property.Include;
                     string packageVersion = (property.AllChildren.SingleOrDefault(x => x.ElementName == "Version") as ProjectMetadataElement)?.Value;
+
+                    Console.WriteLine($"\x1B[36mpackageName: \x1B[33m{packageName}");
+                    Console.WriteLine($"\x1B[36mpackageVersion: \x1B[33m{packageVersion}");
 
                     if (String.IsNullOrEmpty(packageName) || String.IsNullOrEmpty(packageVersion))
                     {
@@ -108,26 +130,33 @@ namespace WebCompiler
 
                     string nugetFolder = $"C:/Users/{Environment.UserName}/.nuget/packages/{packageName}/{packageVersion}/contentFiles/";
 
-                    inputFile = Path.Combine(nugetFolder, InputFileRelative);
+                    Console.WriteLine($"\x1B[36mnugetFolder: \x1B[33m{nugetFolder}");
+
+                    inputFile = Path.Combine(nugetFolder, InputFile);
+
+                    Console.WriteLine($"\x1B[36minputFile: \x1B[33m{inputFile}");
 
                     if (!File.Exists(inputFile))
                     {
-                        throw new FileNotFoundException($"No such file found in {nugetFolder}", InputFileRelative);
+                        throw new FileNotFoundException($"No such file found in {nugetFolder}", InputFile);
                     }
                 }
 
-                return inputFile;
+                return new FileInfo(inputFile/*.Replace("/", "\\")*/);
             }
-        }
+            catch (Exception e)
+            {
+                while (e != null)
+                {
+                    Console.WriteLine($"\x1B[36mExceptionType: \x1B[31m{e.GetType()}");
+                    Console.WriteLine($"\x1B[36mExceptionMessage: \x1B[31m{e.Message}");
+                    Console.WriteLine($"\x1B[36mExceptionStackTrace: \x1B[31m{e.StackTrace}");
 
-        /// <summary>
-        /// Converts the relative input file to an absolute file path.
-        /// </summary>
-        public FileInfo GetAbsoluteInputFile()
-        {
-            string folder = new FileInfo(FileName).DirectoryName;
+                    e = e.InnerException;
+                }
 
-            return new FileInfo(Path.Combine(folder, InputFileRelative.Replace("/", "\\")));
+                return null;
+            }
         }
 
         /// <summary>

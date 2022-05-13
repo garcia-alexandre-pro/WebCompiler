@@ -25,9 +25,7 @@ namespace WebCompiler
 
         public CompilerResult Compile(Config config)
         {
-            string inputFile = config.InputFileAbsolute;
-
-            FileInfo info = new FileInfo(inputFile);
+            FileInfo info = config.GetAbsoluteInputFile();
             string content = File.ReadAllText(info.FullName);
 
             CompilerResult result = new CompilerResult
@@ -36,14 +34,14 @@ namespace WebCompiler
                 OriginalContent = content,
             };
 
-            string extension = Path.GetExtension(inputFile);
+            string extension = Path.GetExtension(info.FullName);
 
             if (!string.IsNullOrWhiteSpace(extension))
             {
                 _extension = extension.Substring(1);
             }
 
-            string name = Path.GetFileNameWithoutExtension(inputFile);
+            string name = Path.GetFileNameWithoutExtension(info.FullName);
 
             if (!string.IsNullOrWhiteSpace(name) && name.StartsWith("_"))
             {
@@ -52,13 +50,13 @@ namespace WebCompiler
 
                 // Temporarily Fix
                 // TODO: Remove after actual fix
-                string tempFilename = Path.Combine(Path.GetDirectoryName(inputFile), _name + ".handlebarstemp");
+                string tempFilename = Path.Combine(Path.GetDirectoryName(info.FullName), _name + ".handlebarstemp");
                 info.CopyTo(tempFilename);
                 info = new FileInfo(tempFilename);
                 _extension = "handlebarstemp";
             }
 
-            _mapPath = Path.ChangeExtension(inputFile, ".js.map.tmp");
+            _mapPath = Path.ChangeExtension(info.FullName, ".js.map.tmp");
 
             try
             {                
@@ -66,7 +64,8 @@ namespace WebCompiler
 
                 result.CompiledContent = _output;
 
-                var options = HandlebarsOptions.FromConfig(config);
+                HandlebarsOptions options = HandlebarsOptions.FromConfig(config);
+
                 if (options.SourceMap || config.SourceMap)
                 {
                     if (File.Exists(_mapPath))
@@ -93,7 +92,7 @@ namespace WebCompiler
             {
                 CompilerError error = new CompilerError
                 {
-                    FileName = inputFile,
+                    FileName = info.FullName,
                     Message = string.IsNullOrEmpty(_error) ? ex.Message : _error,
                     LineNumber = 0,
                     ColumnNumber = 0,

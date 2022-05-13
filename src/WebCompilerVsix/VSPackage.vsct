@@ -8,7 +8,7 @@
     <Commands package="guidCompilerPackage">
         <Menus>
             <Menu guid="guidCompilerCmdSet" id="ContextMenu" priority="0x0200" type="Menu">
-                <Parent guid="guidCompilerCmdSet" id="MyMenuGroup" />
+                <Parent guid="guidCompilerCmdSet" id="MainMenuGroup" />
                 <Strings>
                     <ButtonText>Web Compiler</ButtonText>
                 </Strings>
@@ -16,7 +16,7 @@
         </Menus>
 
         <Groups>
-            <Group guid="guidCompilerCmdSet" id="MyMenuGroup" priority="0x0200">
+            <Group guid="guidCompilerCmdSet" id="MainMenuGroup" priority="0x0200">
                 <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_ITEMNODE"/>
             </Group>
             <Group guid="guidCompilerCmdSet" id="ContextMenuGroup" priority="0x0200">
@@ -30,7 +30,7 @@
             </Group>
         </Groups>
 
-        <!-- See all available images for ImageCatalogGuid at http://glyphlist.azurewebsites.net/knownmonikers/ -->
+        <!--See all available images for ImageCatalogGuid at http://glyphlist.azurewebsites.net/knownmonikers/-->
         <Buttons>
             <Button guid="guidCompilerCmdSet" id="CreateConfigFile" priority="0x0100" type="Button">
                 <Parent guid="guidCompilerCmdSet" id="ContextMenuGroup" />
@@ -95,13 +95,13 @@
     </Commands>
 
     <CommandPlacements>
-        <CommandPlacement guid="guidCompilerCmdSet" id="MyMenuGroup" priority="0x0100">
+        <CommandPlacement guid="guidCompilerCmdSet" id="MainMenuGroup" priority="0x0100">
             <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_PROJNODE"/>
         </CommandPlacement>
-        <CommandPlacement guid="guidCompilerCmdSet" id="MyMenuGroup" priority="0x0100">
+        <CommandPlacement guid="guidCompilerCmdSet" id="MainMenuGroup" priority="0x0100">
             <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_WEBPROJECT"/>
         </CommandPlacement>
-        <CommandPlacement guid="guidCompilerCmdSet" id="MyMenuGroup" priority="0x0100">
+        <CommandPlacement guid="guidCompilerCmdSet" id="MainMenuGroup" priority="0x0100">
             <Parent guid="guidSHLMainMenu" id="IDM_VS_CTXT_WEBITEMNODE"/>
         </CommandPlacement>
         <CommandPlacement guid="guidCompilerCmdSet" id="SolExpMenuGroup" priority="0x0100">
@@ -118,12 +118,14 @@
     </KeyBindings>
 
     <Symbols>
-        <!-- This is the package guid. -->
+
+        <!--This is the package guid.-->
         <GuidSymbol name="guidCompilerPackage" value="{6e1b31b9-e1c1-4697-9b0a-e638eece7765}" />
 
-        <!-- This is the guid used to group the menu commands together -->
+
+        <!--This is the guid used to group the menu commands together-->
         <GuidSymbol name="guidCompilerCmdSet" value="{92a030a3-2493-40f9-b24b-34fdfffafb7d}">
-            <IDSymbol name="MyMenuGroup" value="0x1020" />
+            <IDSymbol name="MainMenuGroup" value="0x1020" />
             <IDSymbol name="SolExpMenuGroup" value="0x1030" />
             <IDSymbol name="ProjectMenuGroup" value="0x1040" />
             <IDSymbol name="ContextMenu" value="0x1050" />
@@ -139,3 +141,4 @@
         </GuidSymbol>
     </Symbols>
 </CommandTable>
+

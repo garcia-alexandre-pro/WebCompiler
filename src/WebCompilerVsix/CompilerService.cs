@@ -46,7 +46,7 @@ namespace WebCompilerVsix
         private static void ConfigProcessed(object sender, ConfigProcessedEventArgs e)
         {
             if (e.AmountProcessed > 0)
-                _dte.StatusBar.Progress(true, $"Compiling \"{e.Config.InputFileRelative}\"", e.AmountProcessed, e.Total);
+                _dte.StatusBar.Progress(true, $"Compiling \"{e.Config.InputFile}\"", e.AmountProcessed, e.Total);
             else
                 _dte.StatusBar.Progress(true, "Compiling...", e.AmountProcessed, e.Total);
         }

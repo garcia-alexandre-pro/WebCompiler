@@ -108,7 +108,7 @@ namespace WebCompiler
                 // Compile if the file if it's referenced directly in compilerconfig.json
                 foreach (Config config in configs)
                 {
-                    string input = Path.Combine(folder, config.InputFileRelative.Replace("/", "\\"));
+                    string input = Path.Combine(folder, config.InputFile.Replace("/", "\\"));
 
                     if (input.Equals(sourceFile, StringComparison.OrdinalIgnoreCase))
                     {
@@ -142,7 +142,7 @@ namespace WebCompiler
 
                         foreach (Config config in configs)
                         {
-                            string inputExtension = Path.GetExtension(config.InputFileRelative);
+                            string inputExtension = Path.GetExtension(config.InputFile);
 
                             if (inputExtension.Equals(sourceExtension, StringComparison.OrdinalIgnoreCase))
                                 list.Add(ProcessConfig(folder, config));
@@ -167,7 +167,7 @@ namespace WebCompiler
 
                 foreach (Config config in configs)
                 {
-                    string input = Path.Combine(folder, config.InputFileRelative.Replace("/", "\\"));
+                    string input = Path.Combine(folder, config.InputFile.Replace("/", "\\"));
 
                     if (input.Equals(sourceFile, StringComparison.OrdinalIgnoreCase))
                         list.Add(config);
