@@ -102,6 +102,7 @@
         <!-- Neutral VSPackage resources -->
         <EmbeddedResource Update="VSPackage.resx">
             <MergeWithCTO>true</MergeWithCTO>
+            <SubType>Designer</SubType>
             <ManifestResourceName>VSPackage</ManifestResourceName>
         </EmbeddedResource>
 
