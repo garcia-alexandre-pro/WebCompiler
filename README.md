@@ -3,15 +3,13 @@
 A Visual Studio extension that compiles LESS, Sass Stylus, JSX, ES6 and CoffeeScript
 files.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/kyk8vpst641r2n0r?svg=true)](https://ci.appveyor.com/project/madskristensen/webcompiler)
+[![Build status](https://ci.appveyor.com/api/projects/status/kyk8vpst641r2n0r?svg=true)](https://ci.appveyor.com/project/garcia-alexandre-pro/webcompiler)
 
 Download the extension at the
-[VS Gallery](https://visualstudiogallery.msdn.microsoft.com/3b329021-cd7a-4a01-86fc-714c2d05bb6c)
-or get the
-[nightly build](http://vsixgallery.com/extension/148ffa77-d70a-407f-892b-9ee542346862/)
+[VS Gallery]([https://visualstudiogallery.msdn.microsoft.com/3b329021-cd7a-4a01-86fc-714c2d05bb6c](https://marketplace.visualstudio.com/items?itemName=AlexGarcia.NewWebCompiler))
 
 See the
-[changelog](https://github.com/madskristensen/WebCompiler/blob/master/CHANGELOG.md)
+[changelog](https://github.com/garcia-alexandre-pro/WebCompiler/blob/master/CHANGELOG.md)
 for changes and roadmap.
 
 ### Features
@@ -145,6 +143,8 @@ In case you'd like to compile files from a nuget package using packagereference 
 - First, your compilerconfig.json file and project configuration file (.csproj or .vbproj) should be in the same folder, as the compiler uses data stored in the configuration file to retrieve the files to compile.
 - Then, you should specify the package name in the compilerconfig.json file.
 - Finally, the input file path should contain the full contentfiles configuration (usually, try `any/any/`) followed by the wwwroot path, something like `any/any/wwwroot/scss` for instance, in order to match its path.
+
+Currently, it doesn't work in the task runner explorer.
 
 Below, you'll find an example:
 ```json
