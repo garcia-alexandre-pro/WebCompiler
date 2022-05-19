@@ -12,6 +12,8 @@ See the
 [changelog](https://github.com/garcia-alexandre-pro/WebCompiler/blob/master/CHANGELOG.md)
 for changes and roadmap.
 
+A VS2022 version is planned, but no release date is given yet, as I need to fix some issues before to migrate it.
+
 ### Features
 
 - Compilation of LESS, Scss, Stylus, JSX, ES6 and (Iced)CoffeeScript files
